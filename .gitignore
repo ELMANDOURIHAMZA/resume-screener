@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Dataset (trop lourd pour git)
+data/Resume.csv
+*.csv
+
+# Modèles entraînés (générés par train.py)
+data/models/*.joblib
+data/models/*.pkl
+
+# Cache dataset
+data/processed/*.json
+
+# Rapports générés
+reports/*.json
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env vars
+.env

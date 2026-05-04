@@ -234,9 +234,10 @@ For a comprehensive technical report, see [REPORT.md](REPORT.md), which includes
 
 This project is licensed under the MIT License — see the LICENSE file for details.
 
-## 👤 Author
+## 👤 Authors
 
-**Ahmed** — Resume Screening Assistant
+**Hamza El Mandouri** — Project Lead, Architecture & ML  
+**Zakariya Kalakhy** — Development & Integration
 
 ## 📞 Support
 

@@ -78,6 +78,14 @@ def create_app() -> FastAPI:
     from app.api.classifier_routes import router as clf_router
     app.include_router(clf_router, prefix="/api/v1")
 
+    # Serve frontend static files (index.html + assets)
+    try:
+        from fastapi.staticfiles import StaticFiles
+        app.mount('/', StaticFiles(directory='frontend', html=True), name='frontend')
+    except Exception:
+        # If StaticFiles is unavailable, proceed without static mount
+        print('[Startup] StaticFiles not available; frontend not mounted.')
+
     @app.get("/", tags=["Root"])
     async def root():
         return {

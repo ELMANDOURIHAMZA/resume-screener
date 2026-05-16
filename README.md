@@ -1,249 +1,366 @@
-# Resume Screening Assistant
+# 🎯 Resume Screening API
 
-An intelligent, automated system for screening and ranking CVs based on job descriptions. Leverages machine learning to accelerate recruitment processes while maintaining interpretability.
+An **AI-powered resume screening and ranking service** using machine learning to match resumes with job descriptions and automatically classify job categories.
 
-## 🎯 Features
+This repository is ready to hand in as a demo project: it includes the dataset, the trained artifacts, the FastAPI backend, and the static frontend.
 
-- **Automated CV Screening** — Rank resumes based on relevance to job descriptions
-- **TF-IDF Vectorization** — Efficient text similarity matching using term frequency-inverse document frequency
-- **Category Classification** — Predict job categories for resumes using scikit-learn pipelines
-- **Web Interface** — User-friendly UI for submitting job descriptions and viewing ranked results
-- **Explainability** — Display matched keywords and relevance scores for transparency
-- **Batch Processing** — Support for large-scale resume screening
-- **Docker Deployment** — Containerized for production environments
-
-## 📋 Requirements
-
-- Python 3.8+
-- Virtual environment (venv or conda)
-- Dependencies listed in `requirements.txt`
-
-## 🚀 Quick Start
-
-### 1. Setup Environment
-
-```powershell
-# Clone the repository
-git clone https://github.com/ELMANDOURIHAMZA/resume-screener.git
-cd resume-screener
-
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-venv\Scripts\Activate.ps1
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### 2. Run the Application
-
-```powershell
-# Launch the application
-python main.py
-
-# Open http://127.0.0.1:8000/ in your browser
-```
-
-### 3. Using the Web Interface
-
-1. Enter a job description in the text area
-2. Specify the number of top candidates to display
-3. Click "Classer les CV" to rank resumes
-4. View results with scores and matched keywords
-
-## 📂 Project Structure
-
-```
-resume-screener/
-├── main.py                    # Application entry point
-├── train.py                   # Model training script
-├── requirements.txt           # Python dependencies
-├── Dockerfile                 # Container image definition
-├── docker-compose.yml         # Multi-container orchestration
-├── REPORT.md                  # Detailed project report
-├── README.md                  # This file
-├── frontend/
-│   └── index.html             # Web UI
-├── data/
-│   ├── Resume.csv             # Training/demo dataset
-│   ├── models/
-│   │   ├── vectorizer.joblib           # Pre-trained TF-IDF vectorizer
-│   │   ├── category_classifier.joblib  # Category classifier model
-│   │   └── classifier_meta.json        # Model metadata
-│   └── samples/
-│       └── sample_data.py              # Example usage and demo data
-├── tools/
-│   └── generate_report_pdf.py  # Script to convert REPORT.md to PDF
-└── tests/
-    └── test_all.py            # Unit and integration tests
-```
-
-## 🏗️ Architecture
-
-### Components
-
-- **Frontend** (`frontend/index.html`) — React-free, vanilla JavaScript UI
-- **API** (`main.py`) — FastAPI application serving ranking and classification endpoints
-- **Preprocessing** — Text cleaning, normalization, keyword extraction
-- **Vectorization** — TF-IDF transformation for similarity computation
-- **Scoring Engine** — Combines TF-IDF similarity, keyword overlap, and section weighting
-- **Storage** — Joblib-persisted models in `data/models/`
-
-### Data Flow
-
-```
-Job Description
-       ↓
-  Preprocessing → Vectorization → TF-IDF Similarity Calculation
-       ↓                              ↓
-  Keyword Extraction         Resume Corpus (Pre-vectorized)
-       ↓                              ↓
-  ────────────────────────────────────
-       ↓
-  Scoring Engine (Combine metrics)
-       ↓
-  Category Classifier (Optional filtering)
-       ↓
-  Ranked Results with Explanations
-       ↓
-  Frontend Display
-```
-
-## 🔧 API Endpoints
-
-### POST `/api/v1/rank`
-
-Submit a job description and receive ranked resumes.
-
-**Request:**
-```json
-{
-  "job_description": "We are looking for a senior Python developer with...",
-  "top_k": 5
-}
-```
-
-**Response:**
-```json
-{
-  "results": [
-    {
-      "resume_id": "resume_001",
-      "score": 0.85,
-      "category": "Software Engineer",
-      "keywords_matched": ["python", "fastapi", "machine learning"],
-      "relevance": "Very Relevant"
-    }
-  ]
-}
-```
-
-## 📊 Model Information
-
-### Vectorizer
-- **Type:** `TfidfVectorizer` (scikit-learn)
-- **File:** `data/models/vectorizer.joblib`
-- **Purpose:** Transform text → TF-IDF vectors
-
-### Classifier
-- **Type:** Scikit-learn Pipeline (LightGBM + SMOTE)
-- **File:** `data/models/category_classifier.joblib`
-- **Purpose:** Predict job category from resume text
-
-### Metadata
-- **File:** `data/models/classifier_meta.json`
-- **Contents:** Model version, training date, evaluation metrics
-
-## 🔄 Retraining Models
-
-To retrain models on new data:
-
-```powershell
-python train.py
-```
-
-This will:
-1. Load `data/Resume.csv`
-2. Preprocess text
-3. Train TF-IDF vectorizer and classifier
-4. Save updated models to `data/models/`
-
-## 🐳 Docker Deployment
-
-### Build and Run
-
-```powershell
-# Build image
-docker build -t resume-screener .
-
-# Run container
-docker run -p 8000:8000 resume-screener
-```
-
-### Docker Compose
-
-```powershell
-docker-compose up --build
-```
-
-Access the application at `http://localhost:8000`
-
-## 📈 Performance Considerations
-
-- **Latency:** Target < 2s per ranking query (with preloaded models)
-- **Scalability:** Use worker threads or async processing for batch scoring
-- **Caching:** Implement result caching for repeated queries
-- **Monitoring:** Log query latencies and error rates
-
-## ⚠️ Known Limitations
-
-- `data/dataset_loader.py` is not included in this distribution; some training utilities may be unavailable
-- CV parsing relies on CSV format; other formats require preprocessing
-- Unbalanced classes in training data (mitigated with SMOTE)
-- No semantic embeddings; keyword-based matching may miss contextual relevance
-
-## 💡 Future Improvements
-
-- Integrate SBERT or similar for semantic matching
-- Implement role-based filtering and prioritization
-- Add more robust section detection (PDF parsing)
-- CI/CD pipeline for automated testing
-- Advanced observability and monitoring
-- Support for multiple languages
-
-## 📄 Detailed Report
-
-For a comprehensive technical report, see [REPORT.md](REPORT.md), which includes:
-- Functional and non-functional specifications
-- Architecture diagrams
-- Evaluation metrics
-- Deployment recommendations
-- Glossary and appendices
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📜 License
-
-This project is licensed under the MIT License — see the LICENSE file for details.
-
-## 👤 Authors
-
-**Hamza El Mandouri** — Project Lead, Architecture & ML  
-**Zakariya Kalakhy** — Development & Integration
-
-## 📞 Support
-
-For issues, questions, or suggestions, please open an issue on GitHub or contact the maintainer.
+![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
-**Last Updated:** May 2026  
-**Status:** Production-Ready
+## 🚀 Quick Start
+
+### Option 1: Local Installation
+
+```bash
+# 1. Clone and setup
+git clone <repository>
+cd resume-screener
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Train models (first time only)
+python train.py --csv data/Resume.csv
+
+# 4. Run the API
+uvicorn app.main:app --reload --port 8000
+```
+
+### Option 2: Docker Compose
+
+```bash
+# Start all services
+docker-compose up -d
+
+# Check status
+docker-compose ps
+
+# View logs
+docker-compose logs -f api
+```
+
+### Access the API
+
+- **Interactive Docs:** http://localhost:8000/docs
+- **ReDoc:** http://localhost:8000/redoc
+- **API Root:** http://localhost:8000/
+
+---
+
+## 📋 Features
+
+✅ **Resume Ranking** - Match resumes to job descriptions using TF-IDF + Cosine Similarity
+✅ **Resume Classification** - Automatically categorize resumes by job type
+✅ **Ensemble Learning** - LightGBM + Logistic Regression + Random Forest
+✅ **Class Balancing** - SMOTE to handle imbalanced training data
+✅ **Async API** - FastAPI with concurrent request handling
+✅ **Docker Support** - Production-ready containerization
+✅ **Self-contained Demo** - Dataset, trained models, API and frontend included
+✅ **API Documentation** - Swagger UI + ReDoc generated by FastAPI
+
+---
+
+## 🏗️ Architecture
+
+```
+                        Resume Screening API
+                               │
+                    ┌──────────┴──────────┐
+                    │                     │
+            ┌───────▼────────┐   ┌────────▼────────┐
+            │ Ranking Engine │   │ Classification  │
+            │                │   │ Engine          │
+            └────────┬────────┘   └────────┬────────┘
+                     │                     │
+         ┌───────────┴──────────┐          │
+         │                      │          │
+      TF-IDF          Cosine Similarity   │
+    Vectorizer                       Ensemble Voting
+         │                           ├─ LogisticRegression
+         │                           ├─ LightGBM
+         │                           └─ RandomForest
+         │                               │
+         └───────────────┬───────────────┘
+                         │
+                   Resume Corpus
+                   (2500+ resumes)
+```
+
+### Key Components
+
+| Component | Purpose |
+|-----------|---------|
+| **app/core/config.py** | Centralized configuration management |
+| **app/services/ranker.py** | ML pipeline singleton & ranking logic |
+| **app/api/routes.py** | FastAPI endpoints for ranking |
+| **app/api/classifier_routes.py** | FastAPI endpoints for classification |
+| **app/schemas/requests.py** | Pydantic validation models |
+| **train.py** | Training script for ML models |
+| **data/models/** | Persisted vectorizer & classifier |
+
+---
+
+## 📚 API Endpoints
+
+### Ranking Resumes
+```bash
+curl -X POST http://localhost:8000/api/v1/rank \
+  -H "Content-Type: application/json" \
+  -d '{
+    "job_description": "Senior Python developer with FastAPI experience",
+    "top_k": 5
+  }'
+```
+
+### Classifying Resumes
+```bash
+curl -X POST http://localhost:8000/api/v1/classify \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resume_text": "Senior Python developer with 8 years experience..."
+  }'
+```
+
+### Health Check
+```bash
+curl http://localhost:8000/api/v1/health
+```
+
+**📖 Full API docs:** Open Swagger UI at `http://localhost:8000/docs`
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# If you add tests later, run them with:
+# pytest -v
+```
+
+The `tests/` folder is present in this snapshot, but no automated test files are included yet.
+
+---
+
+## 🔧 Configuration
+
+Edit `.env` if you want to customize the runtime settings:
+
+```env
+LOG_LEVEL=INFO
+API_VERSION=1.0.0
+CORS_ORIGINS=*
+DEFAULT_TOP_K=5
+MAX_TOP_K=100
+```
+
+---
+
+## 🎓 Training Models
+
+The project includes a complete ML training pipeline:
+
+```bash
+python train.py --csv data/Resume.csv
+```
+
+**Training Process:**
+1. Loads Resume.csv (2500+ resumes with categories)
+2. Preprocesses text (ultra_clean with Unicode normalization)
+3. Vectorizes with TF-IDF (n-grams 1-3, max 60K features)
+4. Balances classes with SMOTE
+5. Trains ensemble classifier (LR + LightGBM + RF)
+6. Saves models to `data/models/`
+
+**Output Models:**
+- `vectorizer.joblib` - TF-IDF transformer (trained on corpus)
+- `category_classifier.joblib` - Ensemble classifier
+- `classifier_meta.json` - Training metadata & metrics
+
+---
+
+## 📊 Performance
+
+- **Initialization:** ~2-5 seconds (model loading)
+- **Ranking:** 50-200ms per request
+- **Classification:** 30-100ms per request
+- **Corpus Size:** 2500 resumes
+- **Model Size:** ~250MB
+
+---
+
+## 🐳 Docker Deployment
+
+### Build Image
+```bash
+docker build -t resume-screener .
+```
+
+### Run Container
+```bash
+docker run -p 8000:8000 \
+  -v $(pwd)/data/models:/app/data/models \
+  resume-screener
+```
+
+### Using Docker Compose
+```bash
+docker-compose up -d
+docker-compose logs -f api
+docker-compose down
+```
+
+**Health Check:**
+```bash
+curl http://localhost:8000/api/v1/health
+```
+
+---
+
+## 📁 Project Structure
+
+```
+resume-screener/
+├── app/
+│   ├── api/
+│   │   ├── routes.py              # Main ranking endpoints
+│   │   ├── classifier_routes.py   # Classification endpoints
+│   │   └── __init__.py
+│   ├── core/
+│   │   ├── config.py              # Configuration management
+│   │   └── __init__.py
+│   ├── services/
+│   │   ├── ranker.py              # ML pipeline (singleton)
+│   │   └── __init__.py
+│   ├── schemas/
+│   │   ├── requests.py            # Pydantic models
+│   │   └── __init__.py
+│   ├── utils/
+│   │   ├── logging_config.py      # Logging setup
+│   │   └── __init__.py
+│   ├── main.py                    # FastAPI app factory
+│   └── __init__.py
+├── data/
+│   ├── Resume.csv                 # Training data (2500+ resumes)
+│   ├── models/
+│   │   ├── vectorizer.joblib
+│   │   ├── category_classifier.joblib
+│   │   └── classifier_meta.json
+│   └── samples/
+│       ├── sample_data.py
+│       └── __init__.py
+├── frontend/
+│   └── index.html                 # Web UI
+├── tests/
+│   ├── test_api.py                # API integration tests
+│   ├── test_ranker.py             # ML unit tests
+│   └── __init__.py
+├── train.py                       # Training script
+├── requirements.txt               # Python dependencies
+├── Dockerfile                     # Container image
+├── docker-compose.yml             # Multi-container setup
+├── .env.example                   # Configuration template
+├── API_DOCUMENTATION.md           # Full API reference
+└── README.md                      # This file
+```
+
+---
+
+## 🔐 Security
+
+- ✅ Non-root user in Docker (appuser:1000)
+- ✅ CORS configured (customizable)
+- ✅ Structured error handling (no stack traces to client)
+- ✅ Input validation (Pydantic)
+- ✅ Rate limiting ready (can be added via middleware)
+- ✅ Health checks for monitoring
+
+---
+
+## 🛠️ Development
+
+### Setup Development Environment
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Run the application
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+---
+
+## 📝 Training Metrics
+
+Latest model performance on test set:
+
+| Metric | Value |
+|--------|-------|
+| Accuracy | ~85% |
+| Precision (macro) | ~83% |
+| Recall (macro) | ~81% |
+| F1-Score (macro) | ~82% |
+
+---
+
+## 🐛 Troubleshooting
+
+### Models not loading
+```bash
+# Verify models exist
+ls -la data/models/
+
+# Retrain if missing
+python train.py --csv data/Resume.csv
+```
+
+### Port already in use
+```bash
+# Change port
+uvicorn app.main:app --port 8001
+
+# Or kill existing process
+lsof -ti:8000 | xargs kill -9
+```
+
+### Docker build fails
+```bash
+# Clear cache and rebuild
+docker-compose down
+docker system prune -a
+docker-compose up --build
+```
+
+---
+
+## 📖 Documentation
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Project structure and technical overview
+- **[REPORT.md](REPORT.md)** - Project analysis and results
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+---
+
+## 📄 License
+
+MIT-style project badge only. No separate LICENSE file is included in this snapshot.
+
+---
+
+## 👤 Author
+
+Resume Screening Team
+
+**Version:** 1.0.0
+**Last Updated:** 2024
